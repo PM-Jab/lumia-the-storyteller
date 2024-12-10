@@ -8,7 +8,8 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { NextUIProvider } from "@nextui-org/react";
-import Header from "./_components/Header";
+import Header from "../components/Header";
+import { BookProvider } from "@/context/bookContext";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -23,12 +24,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body data-new-gr-c-s-check-loaded="14.1211.0" data-gr-ext-installed="">
-        <ClerkProvider>
-          <NextUIProvider>
-            <Header />
-            {children}
-          </NextUIProvider>
-        </ClerkProvider>
+        <BookProvider>
+          <ClerkProvider>
+            <NextUIProvider>
+              <Header />
+              {children}
+            </NextUIProvider>
+          </ClerkProvider>
+        </BookProvider>
       </body>
     </html>
   );

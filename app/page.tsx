@@ -35,7 +35,7 @@ export default function Home() {
             key={index}
             className="flex flex-col items-center bg-white p-4 rounded-lg shadow-lg"
           >
-            <Link href={`/${item.name}/reading`}>
+            <Link href={`/${item.name}/profile`}>
               <Image
                 src={"/psychology-money-cover.png"}
                 alt="cover"
