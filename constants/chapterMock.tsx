@@ -3,7 +3,7 @@ export const the_psychology_of_money_bill_oxley_chapter1 = {
   audioUrl:
     "https://r2-worker.testaudio.workers.dev/the-psychology-of-money_bill-oxley_chapter1",
   total: 11,
-  sentences: [
+  pages: [
     [
       "Let me tell you about a problem. ",
       "It might make you feel better about what\nyou do with your money, ",
@@ -395,7 +395,7 @@ export const the_psychology_of_money_bill_oxley_chapter2 = {
   audioUrl:
     "https://r2-worker.testaudio.workers.dev/the-psychology-of-money_bill-oxley_chapter2",
   total: 11,
-  sentences: [
+  pages: [
     [
       "Luck and risk are siblings. ",
       "They are both the reality that every outcome in life\nis guided by forces other than individual effort.\n\n",

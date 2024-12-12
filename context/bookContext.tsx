@@ -1,10 +1,14 @@
 "use client";
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import type { BookMetadata, ChapterMetadata } from "@/model/bookModel";
+import type {
+  BookMetadata,
+  ChapterMetadata,
+  PageAndTimestamp,
+} from "@/model/bookModel";
 
 interface BookContextType {
-  chapterPages: string[][];
-  setChapterPages: (pages: string[][]) => void;
+  chapterPages: PageAndTimestamp[];
+  setChapterPages: (page: PageAndTimestamp[]) => void;
 
   chapterIndex: number;
   setChapterIndex: (index: number) => void;
@@ -17,6 +21,9 @@ interface BookContextType {
 
   chapterMetadata: ChapterMetadata;
   setChapterMetadata: (metadata: ChapterMetadata) => void;
+
+  highlightedIndex: number;
+  setHighlightedIndex: (index: number) => void;
 }
 
 const BookContext = createContext<BookContextType | undefined>(undefined);
@@ -24,7 +31,7 @@ const BookContext = createContext<BookContextType | undefined>(undefined);
 export const BookProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [chapterPages, setChapterPages] = useState<string[][]>([]);
+  const [chapterPages, setChapterPages] = useState<PageAndTimestamp[]>([]);
   const [chapterIndex, setChapterIndex] = useState<number>(0);
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [bookProfileMetadata, setBookProfileMetadata] = useState<BookMetadata>({
@@ -46,6 +53,7 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
     pages: 0,
     audiobookLength: 0,
   });
+  const [highlightedIndex, setHighlightedIndex] = useState<number>(0);
 
   return (
     <BookContext.Provider
@@ -64,6 +72,9 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
 
         chapterMetadata,
         setChapterMetadata,
+
+        highlightedIndex,
+        setHighlightedIndex,
       }}
     >
       {children}

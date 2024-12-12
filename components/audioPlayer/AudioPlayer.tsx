@@ -1,11 +1,15 @@
 import { HLSAudioplayerProps } from "../../model/bookModel";
-import React, { CSSProperties, useEffect, useRef, useState } from "react";
+import React, { CSSProperties, use, useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import "./AudioPlayer.css";
 import Image from "next/image";
-import { time } from "console";
+import { useBook } from "@/context/bookContext";
+import { audio } from "framer-motion/client";
 
-const AudioPlayer: React.FC<HLSAudioplayerProps> = ({ hlsUrl }) => {
+const AudioPlayer: React.FC<HLSAudioplayerProps> = ({
+  hlsUrl,
+  onPageForward,
+}) => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const [bufferAmount, setBufferAmount] = useState<number>(0);
@@ -13,6 +17,7 @@ const AudioPlayer: React.FC<HLSAudioplayerProps> = ({ hlsUrl }) => {
   const [scrubbing, setScrubbing] = useState<boolean>(false);
   const [autoPaused, setAutoPaused] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const { chapterPages, setHighlightedIndex, pageIndex } = useBook();
 
   useEffect(() => {
     if (audioRef.current == null || hlsUrl == null) {
@@ -65,6 +70,8 @@ const AudioPlayer: React.FC<HLSAudioplayerProps> = ({ hlsUrl }) => {
   };
 
   const onAudioTimeUpdate = () => {
+    highlighting();
+    autoChangingPage();
     if (audioRef.current) {
       const duration = audioRef.current.duration;
       if (duration > 0) {
@@ -165,8 +172,58 @@ const AudioPlayer: React.FC<HLSAudioplayerProps> = ({ hlsUrl }) => {
     }
   };
 
+  const highlighting = () => {
+    const currentTime = audioRef.current
+      ? audioRef.current.currentTime * 1000
+      : 0;
+    const sentenceEndTimes = chapterPages[pageIndex]?.sentenceEndTimestamp;
+    const sentences = chapterPages[pageIndex]?.sentences;
+
+    const newIndex = sentenceEndTimes?.findIndex(
+      (endTime) => currentTime <= endTime * 1000
+    );
+
+    if (sentences && newIndex !== undefined) {
+      setHighlightedIndex(newIndex >= 0 ? newIndex : sentences.length - 1);
+    }
+  };
+
+  const resetHighlighting = () => {
+    setHighlightedIndex(0);
+  };
+
+  const linkAudioTimestampWithPage = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime =
+        chapterPages[pageIndex]?.firstSentenceStartAt;
+    }
+  };
+
+  const autoChangingPage = () => {
+    if (audioRef.current) {
+      const currentTime = audioRef.current
+        ? audioRef.current.currentTime * 1000
+        : 0;
+      const endPageTimestamp =
+        chapterPages[pageIndex]?.lastSentenceEndAt * 1000;
+      const startPageTimestamp =
+        chapterPages[pageIndex]?.firstSentenceStartAt * 1000;
+
+      if (currentTime >= endPageTimestamp) {
+        onPageForward(true);
+      } else if (currentTime < startPageTimestamp) {
+        onPageForward(false);
+      }
+    }
+  };
+
+  useEffect(() => {
+    resetHighlighting();
+    linkAudioTimestampWithPage();
+  }, [pageIndex]);
+
   return (
-    <div className="flex flex-col items-center mx-auto p-4 bg-gray-500">
+    <div className="flex flex-col justify-center items-center mx-auto p-4 bg-gray-500 rounded-lg">
       <div className="flex items-center space-x-4">
         <div onClick={() => onAudioBackward(10)}>
           <Image

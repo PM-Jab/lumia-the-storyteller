@@ -9,6 +9,7 @@ export interface TitleProps {
 
 export interface HLSAudioplayerProps {
   hlsUrl: string;
+  onPageForward: (isNextPage: boolean) => void;
 }
 
 // present on profile
@@ -32,4 +33,11 @@ export interface ChapterMetadata {
   chapterIndex: number;
   pages: number;
   audiobookLength: number; // seconds
+}
+
+export interface PageAndTimestamp {
+  sentences: string[];
+  sentenceEndTimestamp: number[];
+  firstSentenceStartAt: number;
+  lastSentenceEndAt: number;
 }

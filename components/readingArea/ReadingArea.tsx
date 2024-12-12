@@ -8,7 +8,7 @@ const ReadingArea: React.FC<BookReaderProps> = ({
   onPageForward,
   currentPageIndex,
 }) => {
-  const { chapterPages } = useBook();
+  const { chapterPages, highlightedIndex } = useBook();
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { clientX, currentTarget } = event;
     const { left, right } = currentTarget.getBoundingClientRect();
@@ -22,7 +22,18 @@ const ReadingArea: React.FC<BookReaderProps> = ({
   return (
     <div className="book-container" onClick={handleClick}>
       <div className="book-text">
-        <p>{chapterPages[currentPageIndex]}</p>
+        {/* <p>{chapterPages[currentPageIndex].sentences}</p> */}
+        {chapterPages[currentPageIndex].sentences.map((sentence, index) => (
+          <span
+            className={
+              index === highlightedIndex ? "bg-yellow-200" : "opacity-50"
+              // index % 2 === 0 ? "bg-yellow-200" : "bg-green-200"
+            }
+            key={index}
+          >
+            {sentence}
+          </span>
+        ))}
       </div>
     </div>
   );
