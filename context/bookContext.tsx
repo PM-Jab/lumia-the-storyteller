@@ -24,6 +24,9 @@ interface BookContextType {
 
   highlightedIndex: number;
   setHighlightedIndex: (index: number) => void;
+
+  toggleManualChange: boolean;
+  setToggleManualChange: (toggle: boolean) => void;
 }
 
 const BookContext = createContext<BookContextType | undefined>(undefined);
@@ -54,6 +57,7 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
     audiobookLength: 0,
   });
   const [highlightedIndex, setHighlightedIndex] = useState<number>(0);
+  const [toggleManualChange, setToggleManualChange] = useState<boolean>(false);
 
   return (
     <BookContext.Provider
@@ -75,6 +79,9 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
 
         highlightedIndex,
         setHighlightedIndex,
+
+        toggleManualChange,
+        setToggleManualChange,
       }}
     >
       {children}

@@ -17,7 +17,13 @@ const AudioPlayer: React.FC<HLSAudioplayerProps> = ({
   const [scrubbing, setScrubbing] = useState<boolean>(false);
   const [autoPaused, setAutoPaused] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const { chapterPages, setHighlightedIndex, pageIndex } = useBook();
+  const {
+    chapterPages,
+    setHighlightedIndex,
+    pageIndex,
+    setPageIndex,
+    toggleManualChange,
+  } = useBook();
 
   useEffect(() => {
     if (audioRef.current == null || hlsUrl == null) {
@@ -70,14 +76,13 @@ const AudioPlayer: React.FC<HLSAudioplayerProps> = ({
   };
 
   const onAudioTimeUpdate = () => {
-    highlighting();
-    autoChangingPage();
     if (audioRef.current) {
       const duration = audioRef.current.duration;
       if (duration > 0) {
         setProgressAmount((audioRef.current.currentTime * 100) / duration);
       }
     }
+    linkAudioTimestampWithPage();
   };
 
   const onScrubStart = (e: React.MouseEvent) => {
@@ -172,12 +177,12 @@ const AudioPlayer: React.FC<HLSAudioplayerProps> = ({
     }
   };
 
-  const highlighting = () => {
+  const highlighting = (index: number) => {
     const currentTime = audioRef.current
       ? audioRef.current.currentTime * 1000
       : 0;
-    const sentenceEndTimes = chapterPages[pageIndex]?.sentenceEndTimestamp;
-    const sentences = chapterPages[pageIndex]?.sentences;
+    const sentenceEndTimes = chapterPages[index]?.sentenceEndTimestamp;
+    const sentences = chapterPages[index]?.sentences;
 
     const newIndex = sentenceEndTimes?.findIndex(
       (endTime) => currentTime <= endTime * 1000
@@ -194,33 +199,32 @@ const AudioPlayer: React.FC<HLSAudioplayerProps> = ({
 
   const linkAudioTimestampWithPage = () => {
     if (audioRef.current) {
-      audioRef.current.currentTime =
-        chapterPages[pageIndex]?.firstSentenceStartAt;
+      const currentTime = audioRef.current.currentTime;
+      const currentPageIndex = chapterPages
+        .map((page, index) => {
+          if (
+            currentTime >= page.firstSentenceStartAt &&
+            currentTime <= page.lastSentenceEndAt
+          )
+            return index;
+        })
+        .filter((index) => index !== undefined)[0];
+      setPageIndex(currentPageIndex);
+      highlighting(currentPageIndex);
     }
   };
 
-  const autoChangingPage = () => {
+  const setAudioTimeAtStart = () => {
     if (audioRef.current) {
-      const currentTime = audioRef.current
-        ? audioRef.current.currentTime * 1000
-        : 0;
-      const endPageTimestamp =
-        chapterPages[pageIndex]?.lastSentenceEndAt * 1000;
-      const startPageTimestamp =
-        chapterPages[pageIndex]?.firstSentenceStartAt * 1000;
-
-      if (currentTime >= endPageTimestamp) {
-        onPageForward(true);
-      } else if (currentTime < startPageTimestamp) {
-        onPageForward(false);
-      }
+      audioRef.current.currentTime =
+        chapterPages[pageIndex].firstSentenceStartAt;
     }
   };
 
   useEffect(() => {
     resetHighlighting();
-    linkAudioTimestampWithPage();
-  }, [pageIndex]);
+    setAudioTimeAtStart();
+  }, [toggleManualChange]);
 
   return (
     <div className="flex flex-col justify-center items-center mx-auto p-4 bg-gray-500 rounded-lg">

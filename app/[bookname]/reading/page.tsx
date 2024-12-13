@@ -9,6 +9,7 @@ import { useBook } from "@/context/bookContext";
 import Title from "@/components/Title";
 import AudioPlayer from "@/components/audioPlayer/AudioPlayer";
 import type { PageAndTimestamp } from "@/model/bookModel";
+import FocusBox from "@/components/focusBox/FocusBox";
 // import AudioPlayer from "@/components/customAudioPlayer/customAudioPlayer";
 
 export default function Reading() {
@@ -123,11 +124,13 @@ export default function Reading() {
           next
         </button>
       </div>
+
+      <FocusBox pageIndex={pageIndex} />
+
       <ReadingArea
         onPageForward={handleChangePage}
         currentPageIndex={pageIndex}
       />
-      {/* <AudioPlayer /> */}
       <AudioPlayer
         hlsUrl="https://r2-worker.testaudio.workers.dev/chapter1.m3u8?auth_key=jabr2worker"
         onPageForward={handleChangePage}

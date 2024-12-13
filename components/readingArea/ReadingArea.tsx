@@ -8,15 +8,22 @@ const ReadingArea: React.FC<BookReaderProps> = ({
   onPageForward,
   currentPageIndex,
 }) => {
-  const { chapterPages, highlightedIndex } = useBook();
+  const {
+    chapterPages,
+    highlightedIndex,
+    toggleManualChange,
+    setToggleManualChange,
+  } = useBook();
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     const { clientX, currentTarget } = event;
     const { left, right } = currentTarget.getBoundingClientRect();
 
     if (clientX - left < 100) {
       onPageForward(false);
+      setToggleManualChange(!toggleManualChange);
     } else if (right - clientX < 100) {
       onPageForward(true);
+      setToggleManualChange(!toggleManualChange);
     }
   };
   return (

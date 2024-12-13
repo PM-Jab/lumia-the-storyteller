@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body data-new-gr-c-s-check-loaded="14.1211.0" data-gr-ext-installed="">
+      <body suppressHydrationWarning>
         <BookProvider>
           <ClerkProvider>
             <NextUIProvider>
