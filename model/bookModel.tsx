@@ -41,3 +41,14 @@ export interface PageAndTimestamp {
   firstSentenceStartAt: number;
   lastSentenceEndAt: number;
 }
+
+export interface Sentence {
+  text: string;
+  focusWordIds: string[];
+}
+
+export interface FocusWord {
+  word: string;
+  short: string;
+  long: string;
+}

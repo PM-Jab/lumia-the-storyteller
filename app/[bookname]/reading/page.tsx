@@ -1,20 +1,17 @@
 "use client";
 import { useState, useEffect } from "react";
-import {
-  the_psychology_of_money_bill_oxley_chapter1,
-  the_psychology_of_money_bill_oxley_chapter2,
-} from "@/constants/chapterMock";
+import { the_psychology_of_money_bill_oxley } from "@/constants/chapterMock";
+import { words } from "@/constants/words";
 import ReadingArea from "@/components/readingArea/ReadingArea";
 import { useBook } from "@/context/bookContext";
 import Title from "@/components/Title";
 import AudioPlayer from "@/components/audioPlayer/AudioPlayer";
-import type { PageAndTimestamp } from "@/model/bookModel";
+import type { FocusWord, PageAndTimestamp } from "@/model/bookModel";
 import FocusBox from "@/components/focusBox/FocusBox";
 // import AudioPlayer from "@/components/customAudioPlayer/customAudioPlayer";
 
 export default function Reading() {
   // const [bookPages, setBookPages] = useState<string[][]>([]);
-  const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
   const {
     chapterPages,
     setChapterPages,
@@ -27,6 +24,9 @@ export default function Reading() {
 
     pageIndex,
     setPageIndex,
+
+    focusWords,
+    setFocusWords,
   } = useBook();
 
   const handleChangePage = (isForward: boolean) => {
@@ -45,55 +45,39 @@ export default function Reading() {
   // fetch book data from the server
   useEffect(() => {
     // mock fetch book data from the server
-    const chapterName =
-      chapterIndex === 0
-        ? the_psychology_of_money_bill_oxley_chapter1.title
-        : the_psychology_of_money_bill_oxley_chapter2.title;
-    const totalPage =
-      chapterIndex === 0
-        ? the_psychology_of_money_bill_oxley_chapter1.total
-        : the_psychology_of_money_bill_oxley_chapter2.total;
+    const chapterName = the_psychology_of_money_bill_oxley[chapterIndex].title;
+    const totalPage = the_psychology_of_money_bill_oxley[chapterIndex].total;
+    const chapterPageItems: PageAndTimestamp[] =
+      the_psychology_of_money_bill_oxley[chapterIndex].pages.map(
+        (page, index) => {
+          return {
+            sentences: page,
+            sentenceEndTimestamp:
+              the_psychology_of_money_bill_oxley[chapterIndex].sentenceEndTimes[
+                index
+              ],
+            firstSentenceStartAt:
+              the_psychology_of_money_bill_oxley[chapterIndex]
+                .firstWordStartTime[index],
+            lastSentenceEndAt:
+              the_psychology_of_money_bill_oxley[chapterIndex].lastWordEndTime[
+                index
+              ],
+          };
+        }
+      );
+    const mockFocusWords: FocusWord[][] = words.map((wordChap) => {
+      return wordChap.word.map((word, index) => {
+        return {
+          word: word,
+          short: wordChap.short[index],
+          long: wordChap.long[index],
+        };
+      });
+    });
 
-    const pages: PageAndTimestamp[] =
-      chapterIndex === 0
-        ? the_psychology_of_money_bill_oxley_chapter1.pages.map(
-            (page, index) => {
-              return {
-                sentences: page,
-                sentenceEndTimestamp:
-                  the_psychology_of_money_bill_oxley_chapter1.sentenceEndTimes[
-                    index
-                  ],
-                firstSentenceStartAt:
-                  the_psychology_of_money_bill_oxley_chapter1
-                    .firstWordStartTime[index],
-                lastSentenceEndAt:
-                  the_psychology_of_money_bill_oxley_chapter1.lastWordEndTime[
-                    index
-                  ],
-              };
-            }
-          )
-        : the_psychology_of_money_bill_oxley_chapter2.pages.map(
-            (page, index) => {
-              return {
-                sentences: page,
-                sentenceEndTimestamp:
-                  the_psychology_of_money_bill_oxley_chapter2.sentenceEndTimes[
-                    index
-                  ],
-                firstSentenceStartAt:
-                  the_psychology_of_money_bill_oxley_chapter2
-                    .firstWordStartTime[index],
-                lastSentenceEndAt:
-                  the_psychology_of_money_bill_oxley_chapter2.lastWordEndTime[
-                    index
-                  ],
-              };
-            }
-          );
     setTimeout(() => {
-      setChapterPages(pages);
+      setChapterPages(chapterPageItems);
       setChapterMetadata({
         bookTitle: "The Psychology of Money",
         title: chapterName,
@@ -103,6 +87,7 @@ export default function Reading() {
       });
       // setChapterIndex(0);
       setPageIndex(0);
+      setFocusWords(mockFocusWords);
     }, 500);
   }, [chapterIndex]);
 
@@ -125,14 +110,14 @@ export default function Reading() {
         </button>
       </div>
 
-      <FocusBox pageIndex={pageIndex} />
+      <FocusBox words={focusWords[pageIndex]} />
 
       <ReadingArea
         onPageForward={handleChangePage}
         currentPageIndex={pageIndex}
       />
       <AudioPlayer
-        hlsUrl="https://r2-worker.testaudio.workers.dev/chapter1.m3u8?auth_key=jabr2worker"
+        hlsUrl="https://r2-worker.testaudio.workers.dev/the-psychology-of-money/the-psychology-of-money_bill-oxley_chapter01_hls/the-psychology-of-money_bill-oxley_chapter01.m3u8?auth_key=jabr2worker"
         onPageForward={handleChangePage}
       />
     </div>

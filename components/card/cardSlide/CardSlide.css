@@ -42,3 +42,12 @@
 .slide-card-content:hover .slide-card-title {
   color: #007bff; /* Change title color on hover */
 }
+
+.slide-card-content.hovered .slide-card-slided {
+  opacity: 1;
+  transform: translateX(0) translateY(-50%);
+}
+
+.slide-card-content.hovered .slide-card-title {
+  color: #007bff;
+}
