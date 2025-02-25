@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useBook } from "@/context/bookContext";
 import Link from "next/link";
+import axios from "axios";
 
 export default function Profile() {
   const { bookProfileMetadata, setBookProfileMetadata } = useBook();
@@ -54,30 +55,17 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    setTimeout(() => {
-      setBookProfileMetadata({
-        title: "The Psychology of Money",
-        author: "Morgan Housel",
-        pages: 300,
-        audiobookLength: 22, // hours
-        publisher: "Houghton Mifflin Harcourt",
-        genre: "Money",
-        rating: 4.0,
-        totalReviews: 123,
-        chapterLists: [
-          "Chapter 1: No one is crazy",
-          "Chapter 2: Luck & Risk",
-          "Chapter 3: Never enough",
-          "Chapter 4: Confounding Compounding",
-          "Chapter 5: Getting Wealthy vs Staying Wealthy",
-          "Chapter 6: Tails, You Win",
-          "Chapter 7: Freedom",
-          "Chapter 8: Man in the Car Paradox",
-          "Chapter 9: Wealth Is What You Don’t See",
-        ],
-        voiceModel: "Bill Oxley",
+    axios
+      .get(
+        "https://book-detail-worker.testaudio.workers.dev/book-detail/metadata/profile?title=the-psychology-of-money"
+      )
+      .then((response) => {
+        console.log("profile axios: ", response.data);
+        setBookProfileMetadata(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching profile with axios:", error);
       });
-    }, 500);
   }, []);
 
   if (!bookProfileMetadata.title) {
@@ -85,7 +73,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="bg-white shadow-md rounded-lg overflow-hidden pt-20">
       <div className="relative">
         <div className="flex justify-center items-center">
           <Image
@@ -141,9 +129,7 @@ export default function Profile() {
           <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Add to Wishlist
           </button>
-          <Link
-            href={`/${bookProfileMetadata.title.replace(/ /g, "-")}/reading`}
-          >
+          <Link href={`/lumia-reader/${bookProfileMetadata.title}`}>
             <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
               Read Now
             </button>

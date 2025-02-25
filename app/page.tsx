@@ -9,17 +9,17 @@ export default function Home() {
   const { isSignedIn, isLoaded } = useUser(); // Add isLoaded to check if the user data is ready
   const router = useRouter();
   const book = [
-    { name: "Book-1", path: "#" },
-    { name: "Book-2", path: "#" },
-    { name: "Book-3", path: "#" },
-    { name: "Book-4", path: "#" },
+    { name: "The-Psychology-of-Money", path: "#" },
+    // { name: "The-Psychology-of-Money", path: "#" },
+    // { name: "The-Psychology-of-Money", path: "#" },
+    // { name: "The-Psychology-of-Money", path: "#" },
   ];
 
-  useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push("/login");
-    }
-  }, [isSignedIn, isLoaded, router]);
+  // useEffect(() => {
+  //   if (isLoaded && !isSignedIn) {
+  //     router.push("/login");
+  //   }
+  // }, [isSignedIn, isLoaded, router]);
 
   // Only render the component if the user status is loaded
   if (!isLoaded) {
@@ -27,7 +27,7 @@ export default function Home() {
   }
 
   return (
-    <div className="bg-[#f0ead2] w-full h-screen flex flex-col items-center mt-10">
+    <div className="bg-[#f0ead2] w-full h-screen flex flex-col items-center pt-20">
       <h1 className="text-4xl font-bold mb-8">Book Collection</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
         {book.map((item, index) => (
@@ -35,7 +35,7 @@ export default function Home() {
             key={index}
             className="flex flex-col items-center bg-white p-4 rounded-lg shadow-lg"
           >
-            <Link href={`/${item.name}/profile`}>
+            <Link href={`/profile/${item.name}`}>
               <Image
                 src={"/psychology-money-cover.png"}
                 alt="cover"

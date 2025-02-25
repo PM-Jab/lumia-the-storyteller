@@ -38,7 +38,11 @@ export default function Header() {
   const { user, isSignedIn } = useUser();
 
   return (
-    <Navbar maxWidth="full" onMenuOpenChange={setIsMenuOpen}>
+    <Navbar
+      maxWidth="full"
+      onMenuOpenChange={setIsMenuOpen}
+      className="fixed top-0 left-0 w-full z-50"
+    >
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
