@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
+// import {
+//   ClerkProvider,
+//   SignInButton,
+//   SignedIn,
+//   SignedOut,
+//   UserButton,
+// } from "@clerk/nextjs";
 import { NextUIProvider } from "@nextui-org/react";
 import Header from "../components/Header";
 import { BookProvider } from "@/context/bookContext";
@@ -25,12 +25,12 @@ export default function RootLayout({
     <html lang="en">
       <body suppressHydrationWarning>
         <BookProvider>
-          <ClerkProvider>
-            <NextUIProvider>
-              <Header />
-              {children}
-            </NextUIProvider>
-          </ClerkProvider>
+          {/* <ClerkProvider> */}
+          <NextUIProvider>
+            <Header />
+            {children}
+          </NextUIProvider>
+          {/* </ClerkProvider> */}
         </BookProvider>
       </body>
     </html>

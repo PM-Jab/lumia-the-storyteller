@@ -12,30 +12,30 @@ import {
 } from "@nextui-org/react";
 import Image from "next/image";
 import { useState } from "react";
-import { useUser, SignOutButton } from "@clerk/nextjs";
+// import { useUser, SignOutButton } from "@clerk/nextjs";
 
 export default function Header() {
-  const menuList = [
-    {
-      name: "Home",
-      path: "/home",
-    },
-    {
-      name: "Explore",
-      path: "#",
-    },
-    {
-      name: "My Shelf",
-      path: "#",
-    },
-    {
-      name: "Create Story",
-      path: "#",
-    },
+  const menuList: any = [
+    // {
+    //   name: "Home",
+    //   path: "/home",
+    // },
+    // {
+    //   name: "Explore",
+    //   path: "#",
+    // },
+    // {
+    //   name: "My Shelf",
+    //   path: "#",
+    // },
+    // {
+    //   name: "Create Story",
+    //   path: "#",
+    // },
   ];
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, isSignedIn } = useUser();
+  // const { user, isSignedIn } = useUser();
 
   return (
     <Navbar
@@ -57,7 +57,7 @@ export default function Header() {
       </NavbarContent>
 
       <NavbarContent justify="center" className="hidden sm:flex">
-        {menuList.map((item, index) => (
+        {menuList.map((item: any, index: number) => (
           <NavbarItem key={index} className="font-light mx-4">
             <Link
               href={item.path}
@@ -70,7 +70,7 @@ export default function Header() {
       </NavbarContent>
 
       <NavbarMenu>
-        {menuList.map((item, index) => (
+        {menuList.map((item: any, index: number) => (
           <NavbarMenuItem
             key={index}
             className="text-primary font-semibold mx-4"
@@ -81,7 +81,7 @@ export default function Header() {
           </NavbarMenuItem>
         ))}
       </NavbarMenu>
-      <NavbarContent justify="end">
+      {/* <NavbarContent justify="end">
         {isSignedIn ? (
           <SignOutButton />
         ) : (
@@ -89,7 +89,7 @@ export default function Header() {
             <Button color="primary">Get Started</Button>
           </Link>
         )}
-      </NavbarContent>
+      </NavbarContent> */}
     </Navbar>
   );
 }
