@@ -1,0 +1,53 @@
+.slide-card {
+  position: relative;
+  display: inline-block;
+  font-family: Arial, sans-serif;
+}
+
+.slide-card-content {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.slide-card-title {
+  display: inline-block;
+  font-size: 16px;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.slide-card-slided {
+  position: absolute;
+  left: 100%; /* Position to the right of the title */
+  top: 50%;
+  transform: translateX(-20%) translateY(-50%);
+  background-color: #f0f0f0; /* Background color for better visibility */
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #333;
+  opacity: 0; /* Initially hidden */
+  pointer-events: none; /* Prevent interactions while hidden */
+  white-space: nowrap; /* Prevent text wrapping */
+  margin-left: 10px; /* Add spacing between title and slided content */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.slide-card-content:hover .slide-card-slided {
+  opacity: 1; /* Show slided content on hover */
+  transform: translateX(0) translateY(-50%);
+}
+
+.slide-card-content:hover .slide-card-title {
+  color: #007bff; /* Change title color on hover */
+}
+
+.slide-card-content.hovered .slide-card-slided {
+  opacity: 1;
+  transform: translateX(0) translateY(-50%);
+}
+
+.slide-card-content.hovered .slide-card-title {
+  color: #007bff;
+}
