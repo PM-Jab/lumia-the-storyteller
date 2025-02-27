@@ -5,13 +5,15 @@ import {
   NavbarContent,
   NavbarItem,
   Link,
-  Button,
+  // Button,
   NavbarMenuToggle,
   NavbarMenu,
   NavbarMenuItem,
 } from "@nextui-org/react";
 import Image from "next/image";
 import { useState } from "react";
+import ThemeSwitch from "./ThemeSwitch";
+import { Button } from "@heroui/button";
 // import { useUser, SignOutButton } from "@clerk/nextjs";
 
 export default function Header() {
@@ -81,15 +83,10 @@ export default function Header() {
           </NavbarMenuItem>
         ))}
       </NavbarMenu>
-      {/* <NavbarContent justify="end">
-        {isSignedIn ? (
-          <SignOutButton />
-        ) : (
-          <Link href="/create-story">
-            <Button color="primary">Get Started</Button>
-          </Link>
-        )}
-      </NavbarContent> */}
+      <NavbarContent justify="end">
+        <ThemeSwitch />
+        {/* <Button>Click me</Button> */}
+      </NavbarContent>
     </Navbar>
   );
 }

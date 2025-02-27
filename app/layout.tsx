@@ -10,6 +10,8 @@ import "./globals.css";
 import { NextUIProvider } from "@nextui-org/react";
 import Header from "../components/Header";
 import { BookProvider } from "@/context/bookContext";
+import { HeroUIProvider } from "@heroui/react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -22,16 +24,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body suppressHydrationWarning>
-        <BookProvider>
-          {/* <ClerkProvider> */}
-          <NextUIProvider>
-            <Header />
-            {children}
-          </NextUIProvider>
-          {/* </ClerkProvider> */}
-        </BookProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <HeroUIProvider>
+          <NextThemesProvider attribute="class" defaultTheme="system">
+            <BookProvider>
+              {/* <ClerkProvider> */}
+              <NextUIProvider>
+                <Header />
+                {children}
+              </NextUIProvider>
+              {/* </ClerkProvider> */}
+            </BookProvider>
+          </NextThemesProvider>
+        </HeroUIProvider>
       </body>
     </html>
   );

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import { words } from "@/constants/words";
 import ReadingArea from "@/components/readingArea/ReadingArea";
 import { useBook } from "@/context/bookContext";
@@ -26,6 +27,7 @@ export default function Reading() {
   } = useBook();
 
   const [audiolink, setAudiolink] = useState<string>("");
+  const { theme, setTheme } = useTheme();
 
   const handleChangePage = (isForward: boolean) => {
     console.log("change page isForward: ", isForward);
