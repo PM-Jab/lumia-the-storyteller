@@ -73,7 +73,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="bg-white shadow-md rounded-lg overflow-hidden pt-20">
+    <div className="bg-white text-black shadow-md rounded-lg overflow-hidden pt-20">
       <div className="relative">
         <div className="flex justify-center items-center">
           <Image

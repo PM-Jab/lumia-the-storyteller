@@ -12,8 +12,21 @@
   line-height: 1.15;
   display: flex;
   justify-content: center;
-  /* align-items: center; */
 }
+
+@media (prefers-color-scheme: dark) {
+  .book-container {
+    background-color: #333; /* Gray background for dark mode */
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  .book-container {
+    background-color: #fff; /* Gray background for dark mode */
+  }
+}
+
+
 
 .book-text {
   white-space: pre-wrap; /* Preserves whitespace and line breaks */
