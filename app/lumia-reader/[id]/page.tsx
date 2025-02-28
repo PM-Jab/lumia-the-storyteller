@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { words } from "@/constants/words";
+import { money_audioURL } from "@/constants/mock/audiolinkMock";
 import ReadingArea from "@/components/readingArea/ReadingArea";
 import { useBook } from "@/context/bookContext";
 import Title from "@/components/Title";
@@ -41,18 +42,24 @@ export default function Reading() {
       }
     }
   };
-  const mockFocusWords: FocusWord[][] = words.map((wordChap) => {
-    return wordChap.word.map((word, index) => {
-      return {
-        word: word,
-        short: wordChap.short[index],
-        long: wordChap.long[index],
-      };
-    });
-  });
+  // const mockFocusWords: FocusWord[][] = words.map((wordChap) => {
+  //   return wordChap.word.map((word, index) => {
+  //     return {
+  //       word: word,
+  //       short: wordChap.short[index],
+  //       long: wordChap.long[index],
+  //     };
+  //   });
+  // });
 
-  const changingChapter = () => {
-    setChapterIndex(chapterIndex === 0 ? 1 : 0);
+  const changingChapter = (isForword: boolean) => {
+    if (isForword && chapterIndex + 1 < 11) {
+      setChapterIndex(chapterIndex + 1);
+      setPageIndex(0);
+    } else if (!isForword && chapterIndex - 1 >= 1) {
+      setChapterIndex(chapterIndex - 1);
+      setPageIndex(0);
+    }
   };
 
   useEffect(() => {
@@ -60,7 +67,7 @@ export default function Reading() {
       .post(
         "https://book-detail-worker.testaudio.workers.dev/book-detail/chapterInquiry",
         JSON.stringify({
-          chapterNumber: 1,
+          chapterNumber: chapterIndex,
         })
       )
       .then((response) => {
@@ -82,12 +89,13 @@ export default function Reading() {
       .catch((error) => {
         console.error("Error fetching book content with axios:", error);
       });
-  }, []);
+  }, [chapterIndex]);
 
   useEffect(() => {
     axios
       .get(
-        "https://book-detail-worker.testaudio.workers.dev/book-detail/metadata/chapter?chapterNumber=1"
+        "https://book-detail-worker.testaudio.workers.dev/book-detail/metadata/chapter?chapterNumber=" +
+          chapterIndex
       )
       .then((response) => {
         console.log("profile axios: ", response.data);
@@ -102,26 +110,40 @@ export default function Reading() {
       .catch((error) => {
         console.error("Error fetching book content with axios:", error);
       });
-  }, []);
+  }, [chapterIndex]);
 
   useEffect(() => {
     setAudiolink(
-      `https://r2-worker.testaudio.workers.dev/the-psychology-of-money/the-psychology-of-money_bill-oxley_chapter01_hls/the-psychology-of-money_bill-oxley_chapter1.m3u8?auth_key=${process.env.NEXT_PUBLIC_HlS_KEY}`
+      `https://r2-worker.testaudio.workers.dev${
+        money_audioURL[chapterIndex - 1]
+      }?auth_key=${process.env.NEXT_PUBLIC_HlS_KEY}`
     );
-  }, []);
+  }, [chapterIndex]);
 
   return (
     <div className="flex flex-col w-full h-screen items-center pt-20">
       <Title title={"The Psychology of Money"} />
       <div className="flex">
-        {/* <button className="px-4">prev</button> */}
+        <button
+          className="px-4"
+          onClick={() => {
+            changingChapter(false);
+          }}
+        >
+          prev
+        </button>
         <Title title={chapterMetadata.title} />
-        {/* <button className="px-4" onClick={changingChapter}>
+        <button
+          className="px-4"
+          onClick={() => {
+            changingChapter(true);
+          }}
+        >
           next
-        </button> */}
+        </button>
       </div>
 
-      <FocusBox words={mockFocusWords[pageIndex]} />
+      {/* <FocusBox words={mockFocusWords[pageIndex]} /> */}
 
       {chapterMetadata.title?.length > 0 &&
       chapterPages.length > 0 &&
