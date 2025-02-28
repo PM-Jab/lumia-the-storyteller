@@ -53,10 +53,10 @@ export default function Reading() {
   // });
 
   const changingChapter = (isForword: boolean) => {
-    if (isForword && chapterIndex + 1 < 22) {
+    if (isForword && chapterIndex + 1 < 11) {
       setChapterIndex(chapterIndex + 1);
       setPageIndex(0);
-    } else if (!isForword && chapterIndex - 1 >= 0) {
+    } else if (!isForword && chapterIndex - 1 >= 1) {
       setChapterIndex(chapterIndex - 1);
       setPageIndex(0);
     }
