@@ -39,7 +39,7 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [chapterPages, setChapterPages] = useState<PageAndTimestamp[]>([]);
-  const [chapterIndex, setChapterIndex] = useState<number>(0);
+  const [chapterIndex, setChapterIndex] = useState<number>(1);
   const [pageIndex, setPageIndex] = useState<number>(0);
   const [bookProfileMetadata, setBookProfileMetadata] = useState<BookMetadata>({
     title: "",

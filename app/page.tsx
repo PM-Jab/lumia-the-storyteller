@@ -1,30 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-// import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
-  // const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
-  const book = [
-    { name: "The Psychology of Money", path: "#" },
-    // { name: "The-Psychology-of-Money", path: "#" },
-    // { name: "The-Psychology-of-Money", path: "#" },
-    // { name: "The-Psychology-of-Money", path: "#" },
-  ];
-
-  // useEffect(() => {
-  //   if (isLoaded && !isSignedIn) {
-  //     router.push("/login");
-  //   }
-  // }, [isSignedIn, isLoaded, router]);
-
-  // Only render the component if the user status is loaded
-  // if (!isLoaded) {
-  //   return null; // Or a loading spinner
-  // }
+  const book = [{ name: "The Psychology of Money", path: "#" }];
 
   return (
     <div className="bg-[#f0ead2] dark:bg-black w-full h-screen flex flex-col items-center pt-20">

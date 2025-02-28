@@ -85,7 +85,6 @@ export default function Header() {
       </NavbarMenu>
       <NavbarContent justify="end">
         <ThemeSwitch />
-        {/* <Button>Click me</Button> */}
       </NavbarContent>
     </Navbar>
   );
