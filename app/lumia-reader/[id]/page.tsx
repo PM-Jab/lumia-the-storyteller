@@ -82,8 +82,6 @@ export default function Reading() {
           }
         );
 
-        console.log("chapterData: ", chapterData);
-
         setChapterPages(chapterData);
       })
       .catch((error) => {
