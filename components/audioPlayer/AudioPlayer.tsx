@@ -1,10 +1,9 @@
 import { HLSAudioplayerProps } from "../../model/bookModel";
-import React, { CSSProperties, use, useEffect, useRef, useState } from "react";
+import React, { CSSProperties, useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import "./AudioPlayer.css";
 import Image from "next/image";
 import { useBook } from "@/context/bookContext";
-import { audio } from "framer-motion/client";
 
 const AudioPlayer: React.FC<HLSAudioplayerProps> = ({
   hlsUrl,
@@ -34,6 +33,10 @@ const AudioPlayer: React.FC<HLSAudioplayerProps> = ({
       const hls = new Hls();
       hls.loadSource(hlsUrl); // Load the HLS URL from the API response
       hls.attachMedia(audioRef.current);
+
+      hls.config.xhrSetup = (xhr) => {
+        xhr.setRequestHeader("Authorization", `Bearer ${100}`);
+      };
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         // audioRef.current?.play();
