@@ -212,7 +212,10 @@ const AudioPlayer: React.FC<HLSAudioplayerProps> = ({
             return index;
         })
         .filter((index) => index !== undefined)[0];
-      setPageIndex(currentPageIndex);
+
+      if (currentPageIndex !== undefined && currentPageIndex !== pageIndex) {
+        setPageIndex(currentPageIndex);
+      }
       highlighting(currentPageIndex);
     }
   };
