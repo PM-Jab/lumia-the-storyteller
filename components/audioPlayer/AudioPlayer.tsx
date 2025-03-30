@@ -1,15 +1,26 @@
+"use client";
+
 import { HLSAudioplayerProps } from "../../model/bookModel";
 import React, { CSSProperties, useEffect, useRef, useState } from "react";
 import Hls from "hls.js";
 import "./AudioPlayer.css";
 import Image from "next/image";
 import { useBook } from "@/context/bookContext";
+import { AttractAuth } from "../BuildURL";
+import { GenerateJWT } from "@/utils/jwtToken";
+import { audio } from "framer-motion/client";
+import HlsLoader from "./Hls";
+
+const fetchNewToken = async (secret: string) => {
+  return GenerateJWT({ user: "jab" }, secret);
+};
 
 const AudioPlayer: React.FC<HLSAudioplayerProps> = ({
   hlsUrl,
   onPageForward,
+  secret,
 }) => {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  let audioRef = useRef<HTMLAudioElement>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const [bufferAmount, setBufferAmount] = useState<number>(0);
   const [progressAmount, setProgressAmount] = useState<number>(0);
@@ -24,33 +35,30 @@ const AudioPlayer: React.FC<HLSAudioplayerProps> = ({
     toggleManualChange,
   } = useBook();
 
+  // load the audio file
   useEffect(() => {
-    if (audioRef.current == null || hlsUrl == null) {
-      return;
-    }
-
-    if (hlsUrl && Hls.isSupported()) {
-      const hls = new Hls();
-      hls.loadSource(hlsUrl); // Load the HLS URL from the API response
-      hls.attachMedia(audioRef.current);
-
-      hls.config.xhrSetup = (xhr) => {
-        xhr.setRequestHeader("Authorization", `Bearer ${100}`);
-      };
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        // audioRef.current?.play();
-      });
-
-      return () => {
-        hls.destroy();
-      };
-    } else if (audioRef.current && hlsUrl) {
-      // For browsers with native HLS support, like Safari
-      audioRef.current.src = hlsUrl;
-      audioRef.current.addEventListener("loadedmetadata", () => {
-        audioRef.current?.play();
-      });
+    // if (audioRef.current == null || hlsUrl == null) {
+    //   return;
+    // }
+    // if (hlsUrl && Hls.isSupported()) {
+    //   const hls = new Hls();
+    //   fetchNewToken(secret).then((token) => {
+    //     hls.loadSource(hlsUrl + "?auth=" + token);
+    //   });
+    //   hls.attachMedia(audioRef.current);
+    //   hls.on(Hls.Events.MANIFEST_PARSED, () => {});
+    //   return () => {
+    //     hls.destroy();
+    //   };
+    // } else if (audioRef.current && hlsUrl) {
+    //   audioRef.current.src = hlsUrl;
+    //   audioRef.current.addEventListener("loadedmetadata", () => {
+    //     audioRef.current?.play();
+    //   });
+    // }
+    const hlsLoaderResult = HlsLoader(hlsUrl);
+    if (hlsLoaderResult && typeof hlsLoaderResult !== "function") {
+      audioRef = hlsLoaderResult as React.RefObject<HTMLAudioElement>;
     }
   }, [hlsUrl]);
 
