@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import { words } from "@/constants/words";
@@ -10,7 +11,29 @@ import AudioPlayer from "@/components/audioPlayer/AudioPlayer";
 import type { FocusWord, PageAndTimestamp } from "@/model/bookModel";
 import FocusBox from "@/components/focusBox/FocusBox";
 import axios from "axios";
+import { GenerateJWT } from "@/utils/jwtToken";
+import { getChapterDetail, getChapterMeta } from "@/api/bookDetail";
 // import AudioPlayer from "@/components/customAudioPlayer/customAudioPlayer";
+
+const chapterData = async (title: string, chapterIndex: number) => {
+  const res = await getChapterDetail(title, chapterIndex);
+  if (res.status === "SUCCESS") {
+    console.log("chapter data axios: ", res.result);
+    return res.result;
+  } else {
+    console.error("Error fetching chapter data with axios:", res.error);
+  }
+};
+
+const chapterMeta = async (title: string, chapterIndex: number) => {
+  const res = await getChapterMeta(title, chapterIndex);
+  if (res.status === "SUCCESS") {
+    console.log("chapter meta axios: ", res.result);
+    return res.result;
+  } else {
+    console.error("Error fetching chapter meta with axios:", res.error);
+  }
+};
 
 export default function Reading() {
   const {
@@ -63,58 +86,48 @@ export default function Reading() {
   };
 
   useEffect(() => {
-    axios
-      .post(
-        "https://book-detail-worker.testaudio.workers.dev/book-detail/chapterInquiry",
-        JSON.stringify({
-          chapterNumber: chapterIndex,
-        })
-      )
-      .then((response) => {
-        const chapterData: PageAndTimestamp[] = response.data.map(
-          (page: any) => {
-            return {
-              sentences: page.sentences,
-              sentenceEndTimestamp: page.sentenceEndTimes,
-              firstSentenceStartAt: page.firstSentenceStartAt,
-              lastSentenceEndAt: page.lastSentenceEndAt,
-            };
-          }
-        );
+    const fetchChapterData = async () => {
+      const response = await chapterData(
+        "The Psychology of Money",
+        chapterIndex
+      );
 
-        setChapterPages(chapterData);
-      })
-      .catch((error) => {
-        console.error("Error fetching book content with axios:", error);
+      const item: PageAndTimestamp[] = response.map((page: any) => {
+        return {
+          sentences: page.sentences,
+          sentenceEndTimestamp: page.sentenceEndTimes,
+          firstSentenceStartAt: page.firstSentenceStartAt,
+          lastSentenceEndAt: page.lastSentenceEndAt,
+        };
       });
+
+      setChapterPages(item);
+    };
+    fetchChapterData();
   }, [chapterIndex]);
 
   useEffect(() => {
-    axios
-      .get(
-        "https://book-detail-worker.testaudio.workers.dev/book-detail/metadata/chapter?chapterNumber=" +
-          chapterIndex
-      )
-      .then((response) => {
-        console.log("profile axios: ", response.data);
-        setChapterMetadata({
-          bookTitle: response.data.bookTitle,
-          title: response.data.title,
-          chapterIndex: 0,
-          pages: response.data.pages,
-          audiobookLength: response.data.duration,
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching book content with axios:", error);
+    const fetchChapterMeta = async () => {
+      const response = await chapterMeta(
+        "The Psychology of Money",
+        chapterIndex
+      );
+      setChapterMetadata({
+        bookTitle: response.bookTitle,
+        title: response.title,
+        chapterIndex: 0,
+        pages: response.pages,
+        audiobookLength: response.duration,
       });
+    };
+    fetchChapterMeta();
   }, [chapterIndex]);
 
   useEffect(() => {
     setAudiolink(
       `https://r2-worker.testaudio.workers.dev${
         money_audioURL[chapterIndex - 1]
-      }?auth_key=${process.env.NEXT_PUBLIC_HlS_KEY}`
+      }}`
     );
   }, [chapterIndex]);
 
@@ -151,7 +164,11 @@ export default function Reading() {
             onPageForward={handleChangePage}
             currentPageIndex={pageIndex}
           />
-          <AudioPlayer hlsUrl={audiolink} onPageForward={handleChangePage} />
+          <AudioPlayer
+            hlsUrl={audiolink}
+            onPageForward={handleChangePage}
+            secret={process.env.NEXT_PUBLIC_HLS_KEY || ""}
+          />
         </div>
       ) : (
         <div>Loading...</div>

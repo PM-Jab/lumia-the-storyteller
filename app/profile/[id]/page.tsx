@@ -4,6 +4,19 @@ import { useEffect, useState } from "react";
 import { useBook } from "@/context/bookContext";
 import Link from "next/link";
 import axios from "axios";
+import { GenerateJWT } from "@/utils/jwtToken";
+import { getBookProfile } from "@/api/bookProfile";
+import RatingStar from "@/components/RatingStar";
+
+const bookProfile = async (title: string) => {
+  const res = await getBookProfile("The Psychology of Money");
+  if (res.status === "SUCCESS") {
+    console.log("profile axios: ", res.result);
+    return res.result;
+  } else {
+    console.error("Error fetching profile with axios:", res.error);
+  }
+};
 
 export default function Profile() {
   const { bookProfileMetadata, setBookProfileMetadata } = useBook();
@@ -14,58 +27,11 @@ export default function Profile() {
     setExpanded(expanded === index ? null : index);
   };
 
-  const renderStars = () => {
-    const fullStars = Math.floor(bookProfileMetadata.rating);
-    const halfStar = bookProfileMetadata.rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-    return (
-      <>
-        {[...Array(fullStars)].map((_, i) => (
-          <svg
-            key={`full-${i}`}
-            className="h-6 w-6 text-yellow-500"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175.107l-.488 1.22c-.23.575-.98 1.17-1.739 1.17h-3.462c-.969 0-1.37-1.24-.588-1.81l2.8-2.034a1 1 0 00.364-1.118l-1.07-3.292z"></path>
-          </svg>
-        ))}
-        {halfStar && (
-          <svg
-            className="h-6 w-6 text-yellow-500"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175.107l-.488 1.22c-.23.575-.98 1.17-1.739 1.17h-3.462c-.969 0-1.37-1.24-.588-1.81l2.8-2.034a1 1 0 00.364-1.118l-1.07-3.292z"></path>
-          </svg>
-        )}
-        {[...Array(emptyStars)].map((_, i) => (
-          <svg
-            key={`empty-${i}`}
-            className="h-6 w-6 text-gray-300"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-          >
-            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175.107l-.488 1.22c-.23.575-.98 1.17-1.739 1.17h-3.462c-.969 0-1.37-1.24-.588-1.81l2.8-2.034a1 1 0 00-.364-1.118l-1.07-3.292z"></path>
-          </svg>
-        ))}
-      </>
-    );
-  };
-
   useEffect(() => {
-    axios
-      .get(
-        "https://book-detail-worker.testaudio.workers.dev/book-detail/metadata/profile?title=the-psychology-of-money"
-      )
-      .then((response) => {
-        console.log("profile axios: ", response.data);
-        setBookProfileMetadata(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching profile with axios:", error);
-      });
+    const fetchBookProfile = async () => {
+      setBookProfileMetadata(await bookProfile("The Psychology of Money"));
+    };
+    fetchBookProfile();
   }, []);
 
   if (!bookProfileMetadata.title) {
@@ -121,7 +87,7 @@ export default function Profile() {
         <p className="mb-2">Genre: {bookProfileMetadata.genre}</p>
 
         <div className="flex items-center mt-4">
-          {renderStars()}
+          {RatingStar(bookProfileMetadata.rating)}
           <p className="ml-2 text-gray-600">({bookProfileMetadata.rating})</p>
         </div>
 
