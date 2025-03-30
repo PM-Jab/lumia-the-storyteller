@@ -10,6 +10,7 @@ export interface TitleProps {
 export interface HLSAudioplayerProps {
   hlsUrl: string;
   onPageForward: (isNextPage: boolean) => void;
+  secret: string;
 }
 
 // present on profile
