@@ -87,12 +87,18 @@ export default function Reading() {
 
   useEffect(() => {
     const fetchChapterData = async () => {
-      const response = await chapterData(
+      const res = await getChapterDetail(
         "The Psychology of Money",
         chapterIndex
       );
 
-      const item: PageAndTimestamp[] = response.map((page: any) => {
+      if (res.status === "SUCCESS") {
+        console.log("chapter data axios: ", res.result);
+      } else {
+        console.error("Error fetching chapter data with axios:", res.error);
+      }
+
+      const item: PageAndTimestamp[] = res.result.map((page: any) => {
         return {
           sentences: page.sentences,
           sentenceEndTimestamp: page.sentenceEndTimes,
@@ -108,16 +114,19 @@ export default function Reading() {
 
   useEffect(() => {
     const fetchChapterMeta = async () => {
-      const response = await chapterMeta(
-        "The Psychology of Money",
-        chapterIndex
-      );
+      const res = await getChapterMeta("The Psychology of Money", chapterIndex);
+
+      if (res.status === "SUCCESS") {
+        console.log("chapter meta axios: ", res.result);
+      } else {
+        console.error("Error fetching chapter meta with axios:", res.error);
+      }
       setChapterMetadata({
-        bookTitle: response.bookTitle,
-        title: response.title,
+        bookTitle: res.result.bookTitle,
+        title: res.result.title,
         chapterIndex: 0,
-        pages: response.pages,
-        audiobookLength: response.duration,
+        pages: res.result.pages,
+        audiobookLength: res.result.duration,
       });
     };
     fetchChapterMeta();
@@ -127,7 +136,7 @@ export default function Reading() {
     setAudiolink(
       `https://r2-worker.testaudio.workers.dev${
         money_audioURL[chapterIndex - 1]
-      }}`
+      }`
     );
   }, [chapterIndex]);
 
@@ -159,7 +168,7 @@ export default function Reading() {
       {chapterMetadata.title?.length > 0 &&
       chapterPages.length > 0 &&
       audiolink != "" ? (
-        <div>
+        <div className="w-[720px]">
           <ReadingArea
             onPageForward={handleChangePage}
             currentPageIndex={pageIndex}

@@ -33,34 +33,42 @@ const AudioPlayer: React.FC<HLSAudioplayerProps> = ({
     pageIndex,
     setPageIndex,
     toggleManualChange,
+    chapterIndex,
   } = useBook();
 
   // load the audio file
   useEffect(() => {
-    // if (audioRef.current == null || hlsUrl == null) {
-    //   return;
-    // }
-    // if (hlsUrl && Hls.isSupported()) {
-    //   const hls = new Hls();
-    //   fetchNewToken(secret).then((token) => {
-    //     hls.loadSource(hlsUrl + "?auth=" + token);
-    //   });
-    //   hls.attachMedia(audioRef.current);
-    //   hls.on(Hls.Events.MANIFEST_PARSED, () => {});
-    //   return () => {
-    //     hls.destroy();
-    //   };
-    // } else if (audioRef.current && hlsUrl) {
-    //   audioRef.current.src = hlsUrl;
-    //   audioRef.current.addEventListener("loadedmetadata", () => {
-    //     audioRef.current?.play();
-    //   });
-    // }
-    const hlsLoaderResult = HlsLoader(hlsUrl);
-    if (hlsLoaderResult && typeof hlsLoaderResult !== "function") {
-      audioRef = hlsLoaderResult as React.RefObject<HTMLAudioElement>;
+    console.log("hlsUrl in useEffect: ", hlsUrl);
+    if (audioRef.current == null || hlsUrl == null) {
+      return;
+    }
+    if (hlsUrl && Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(hlsUrl);
+      hls.attachMedia(audioRef.current);
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {});
+      return () => {
+        hls.destroy();
+      };
+    } else if (audioRef.current && hlsUrl) {
+      audioRef.current.src = hlsUrl;
+      audioRef.current.addEventListener("loadedmetadata", () => {
+        audioRef.current?.play();
+      });
     }
   }, [hlsUrl]);
+
+  useEffect(() => {
+    // reset the audio player when chapter changes
+    setIsPlaying(false);
+    setProgressAmount(0);
+    setBufferAmount(0);
+    setHighlightedIndex(0);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  }, [chapterIndex]);
 
   const onAudioProgress = () => {
     if (audioRef.current) {
