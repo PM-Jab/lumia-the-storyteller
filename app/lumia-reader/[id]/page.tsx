@@ -168,7 +168,7 @@ export default function Reading() {
       {chapterMetadata.title?.length > 0 &&
       chapterPages.length > 0 &&
       audiolink != "" ? (
-        <div className="w-[720px]">
+        <div className="lg:w-[720px]">
           <ReadingArea
             onPageForward={handleChangePage}
             currentPageIndex={pageIndex}
