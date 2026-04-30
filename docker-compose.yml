@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # NEXT_PUBLIC_* must be available at build time (inlined into JS bundle)
+        - NEXT_PUBLIC_HLS_KEY=${NEXT_PUBLIC_HLS_KEY}
+    container_name: lumia-storyteller
+    ports:
+      - "3000:3000"
+    environment:
+      # Server-side secrets injected at runtime — never baked into the image
+      - JWT_SECRET=${JWT_SECRET}
+    restart: unless-stopped
